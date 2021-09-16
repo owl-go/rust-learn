@@ -1,6 +1,7 @@
 pub trait Summary {
     fn summarize(&self) -> String;
 }
+
 pub struct NewsArticle {
     pub headline: String,
     pub location: String,
@@ -20,6 +21,7 @@ pub struct Tweet {
     pub reply: bool,
     pub retwee: bool,
 }
+
 impl Summary for Tweet {
     fn summarize(&self) -> String {
         format!("{}:{}", self.username, self.content)
@@ -38,4 +40,12 @@ pub fn largest<T: PartialOrd + Copy>(list: &[T]) -> T {
         }
     }
     largest
+}
+
+pub fn longest<'a>(x: &'a str, y: &'a str) -> &'a str {
+    if x.len() > y.len() {
+        x
+    }else{
+        y
+    }
 }

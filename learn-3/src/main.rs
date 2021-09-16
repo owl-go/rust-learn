@@ -1,6 +1,6 @@
 mod libs;
 
-use crate::libs::notify;
+use crate::libs::{notify, longest};
 use libs::Summary;
 use libs::Tweet;
 use std::collections::HashMap;
@@ -76,4 +76,6 @@ fn main() {
     };
     println!("1 new tweet:{} ", tweet.summarize());
     notify(tweet);
+    let longest=longest("i am from china","i am from france");
+    println!("{}",longest);
 }
