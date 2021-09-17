@@ -24,4 +24,22 @@ fn main() {
     let post = post.request_review();
     let post = post.approve();
     println!("post content:{}", post.content());
+
+    let msg = Message::Hello { id: 5 };
+    match msg {
+        Message::Hello {
+            id: id_varible @ 1..=7,
+        } => {
+            println!("found id in range:{}", id_varible);
+        }
+        Message::Hello { id: 10..=12 } => {
+            println!("found id in another range");
+        }
+        Message::Hello { id } => {
+            println!("found some other id:{}", id);
+        }
+    }
+}
+enum Message {
+    Hello { id: u32 },
 }
