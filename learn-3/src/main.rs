@@ -76,6 +76,6 @@ fn main() {
     };
     println!("1 new tweet:{} ", tweet.summarize());
     notify(tweet);
-    let longest=longest("i am from china","i am from france");
-    println!("{}",longest);
+    let longest = longest("i am from china", "i am from france");
+    println!("{}", longest);
 }
