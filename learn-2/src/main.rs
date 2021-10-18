@@ -55,7 +55,6 @@ fn main() {
     } else {
         println!("not electronic book");
     }
-    user::get_test();
     let total = uks::add(10, 90);
     println!("total:{}", total);
     user::test();

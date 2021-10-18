@@ -1,45 +1,66 @@
-use std::{
-    collections::HashMap,
-    error::Error,
-    fs::File,
-    io::{self, ErrorKind, Read},
-    net::IpAddr,
-};
+use std::{thread, time::Duration};
 
-pub fn get_test() {
-    println!("hello test");
+trait Summary {
+    fn summarize(&self) -> String {
+        String::from("read more...")
+    }
 }
-enum SpreadsheetCell {
-    Int(i32),
-    Float(f64),
-    Text(String),
+struct NewsArticle {
+    headline: String,
+    location: String,
+    author: String,
+    content: String,
 }
-struct Point<T, U> {
-    x: T,
-    y: U,
+impl Summary for NewsArticle {
+    // fn summarize(&self) -> String {
+    //     format!("{},by {}({})", self.headline, self.author, self.location)
+    // }
 }
-impl<T, U> Point<T, U> {
-    fn mixup<V, W>(self, other: Point<V, W>) -> Point<T, W> {
-        Point {
-            x: self.x,
-            y: other.y,
+
+struct Tweet {
+    username: String,
+    content: String,
+    reply: bool,
+    retweet: bool,
+}
+impl Summary for Tweet {
+    fn summarize(&self) -> String {
+        format!("{}:{}", self.username, self.content)
+    }
+}
+
+struct Cacher<T>
+where
+    T: Fn(u32) -> u32,
+{
+    caculation: T,
+    value: Option<u32>,
+}
+
+impl<T> Cacher<T>
+where
+    T: Fn(u32) -> u32,
+{
+    fn new(caculation: T) -> Cacher<T> {
+        Cacher {
+            caculation: caculation,
+            value: None,
+        }
+    }
+    fn value(&mut self, arg: u32) -> u32 {
+        match self.value {
+            Some(x) => x,
+            None => {
+                let v = (self.caculation)(arg);
+                self.value = Some(v);
+                v
+            }
         }
     }
 }
-enum Option<T> {
-    Some(T),
-    None,
-}
-enum Result<T, E> {
-    Ok(T),
-    Err(E),
-}
 
-pub fn test() {
-    let p1 = Point { x: 5, y: 4 };
-    let p2 = Point { x: "hello", y: 'c' };
-    let p3 = p1.mixup(p2);
-    println!("p3.x={},p3.y={}", p3.x, p3.y);
+fn notify(item: impl Summary) {
+    println!("break news:{}", item.summarize());
 }
 
 fn largest<T: PartialOrd + Copy>(list: &[T]) -> T {
@@ -50,4 +71,24 @@ fn largest<T: PartialOrd + Copy>(list: &[T]) -> T {
         }
     }
     larger
+}
+
+pub fn test() {
+    let x = vec![1, 2, 3];
+    let equal_to_x = move |z| z == x;
+    println!("can't use x here:{:?}", x);
+    let y = vec![1, 2, 3];
+    assert!(equal_to_x(y));
+    // let string1 = String::from("abcd");
+    // let string2 = "xyz";
+    // let result = longest(string1.as_str(), string2);
+    // println!("longet str is:{}", result);
+}
+
+fn longest<'a>(str1: &'a str, str2: &'a str) -> &'a str {
+    if str1.len() > str2.len() {
+        str1
+    } else {
+        str2
+    }
 }
