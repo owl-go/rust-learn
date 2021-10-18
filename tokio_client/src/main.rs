@@ -5,7 +5,7 @@ use tokio::{
     net::TcpStream,
     sync::mpsc,
 };
-const LOCAL_SERVER: &str = "127.0.0.1:8888";
+const LOCAL_SERVER: &str = "127.0.0.1:8080";
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
@@ -16,16 +16,20 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         let mut r = BufReader::new(r);
         let mut line = String::new();
         loop {
-            if let Some(str) = rx.recv().await {
-                w.write_all(str.as_bytes()).await.unwrap();
-            } else {
-                continue;
+            tokio::select! {
+                result = r.read_line(&mut line) => {
+                    if result.unwrap()==0{
+                        break;
+                    }
+                    println!("recv msg from server:{}", line);
+                    line.clear();
+                }
+                result = rx.recv() => {
+                    let msg = result.unwrap();
+                    w.write_all(msg.as_bytes()).await.unwrap();
+
+                }
             }
-            let read_byte = r.read_line(&mut line).await.unwrap();
-            if read_byte > 0 {
-                println!("recv msg from server:{}", line);
-            }
-            line.clear();
         }
     });
     loop {
